@@ -126,7 +126,7 @@ main(int argc, char **argv)
     change_smoothing_half_life(4);
 
     while(1) {
-        opt = getopt(argc, argv, "m:p:h:H:i:k:A:sruS:d:g:lwz:M:t:T:c:C:DL:I:v");
+        opt = getopt(argc, argv, "m:p:h:H:i:k:KA:sruS:d:g:lwz:M:t:T:c:C:DL:I:v");
         if(opt < 0)
             break;
 
@@ -168,6 +168,9 @@ main(int argc, char **argv)
             if(kernel_metric < 0 || kernel_metric > 0xFFFF)
                 goto usage;
             break;
+        case 'K':
+        	reflect_kernel_metric = 1;
+        	break;
         case 'A':
             allow_duplicates = parse_nat(optarg);
             if(allow_duplicates < 0 || allow_duplicates > 0xFFFF)

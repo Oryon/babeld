@@ -71,6 +71,10 @@ smoothing.  The default is 4s.
 Specify the priority value used when installing routes into the kernel.
 The default is 0.
 .TP
+.BI \-K
+Reflect internal babel metrics into kernel routes. Used priority is: 
+kernel-priority (default is 1024) + babel_metric.
+.TP
 .BI \-A " priority"
 Allow duplicating external routes when their kernel priority is at least
 .IR priority .
@@ -163,6 +167,11 @@ This specifies the UDP port number to be used by the protocol, and is equivalent
 This specifies the priority value used when installing routes into the
 kernel, and is equivalent to the command-line option
 .BR \-k .
+.TP
+.BI reflect-kernel-metric " {" true | false }
+Reflect internal babel metrics into kernel routes. Used priority is: 
+kernel-priority (default is 1024) + babel_metric.
+.BR \-K .
 .TP
 .BI allow-duplicates " priority"
 This allows duplicating external routes when their kernel priority is

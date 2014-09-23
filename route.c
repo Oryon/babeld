@@ -43,11 +43,13 @@ THE SOFTWARE.
 
 struct babel_route **routes = NULL;
 static int route_slots = 0, max_route_slots = 0;
-int kernel_metric = 0;
+int kernel_metric = 0, reflect_kernel_metric = 0;
 int allow_duplicates = -1;
 int diversity_kind = DIVERSITY_NONE;
 int diversity_factor = 256;     /* in units of 1/256 */
 int keep_unfeasible = 0;
+
+#define IP6_RT_PRIO_USER 1024 //from linux/ipv6_route.h, used as default kernel metric
 
 static int smoothing_half_life = 0;
 static int two_to_the_one_over_hl = 0; /* 2^(1/hl) * 0x10000 */
@@ -459,7 +461,16 @@ find_min_iroute(const unsigned char *dst_prefix, unsigned char dst_plen,
 int
 metric_to_kernel(int metric)
 {
-    return metric < INFINITY ? kernel_metric : KERNEL_INFINITY;
+	if(metric >= INFINITY) {
+		return KERNEL_INFINITY;
+	} else if(reflect_kernel_metric) {
+		int r;
+		if((r = ((kernel_metric)?kernel_metric:IP6_RT_PRIO_USER) + metric) >= KERNEL_INFINITY)
+			return KERNEL_INFINITY - 1;
+		return r;
+	} else {
+		return kernel_metric;
+	}
 }
 
 /* This is used to maintain the invariant that the installed route is at
