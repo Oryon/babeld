@@ -372,6 +372,7 @@ parse_filter(int c, gnc_t gnc, void *closure, struct filter **filter_return)
                 goto error;
             filter->proto = proto;
         } else if(strcmp(token, "local") == 0) {
+        	fprintf(stderr, "local filter\n");
             filter->proto = RTPROT_BABEL_LOCAL;
         } else if(strcmp(token, "if") == 0) {
             char *interface;
@@ -587,6 +588,7 @@ parse_ifconf(int c, gnc_t gnc, void *closure,
 static void
 add_filter(struct filter *filter, struct filter **filters)
 {
+	fprintf(stderr, "Adding filter proto=%d metric=%u\n", filter->proto, filter->action.add_metric);
     if(*filters == NULL) {
         filter->next = NULL;
         *filters = filter;
@@ -690,7 +692,8 @@ parse_option(int c, gnc_t gnc, void *closure, char *token)
     } else if(strcmp(token, "keep-unfeasible") == 0 ||
               strcmp(token, "link-detect") == 0 ||
               strcmp(token, "random-id") == 0 ||
-              strcmp(token, "daemonise") == 0) {
+              strcmp(token, "daemonise") == 0 ||
+              strcmp(token, "reflect-kernel-metric") == 0) {
         int b;
         c = getbool(c, &b, gnc, closure);
         if(c < -1)
@@ -834,6 +837,7 @@ parse_config(gnc_t gnc, void *closure)
         } else if(strcmp(token, "redistribute") == 0) {
             struct filter *filter;
             c = parse_filter(c, gnc, closure, &filter);
+            fprintf(stderr, "parse_filter: %d\n", c);
             if(c < -1)
                 return -1;
             add_filter(filter, &redistribute_filters);
